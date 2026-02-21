@@ -1,0 +1,14 @@
+-r requirements.txt
+
+# Testing
+pytest>=6.0
+pytest-cov>=2.0
+
+# Code quality
+black>=21.0
+pylint>=2.8
+mypy>=0.900
+
+# Documentation
+mkdocs>=1.2.0
+mkdocs-material>=7.0.0
