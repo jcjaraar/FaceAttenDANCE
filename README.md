@@ -34,6 +34,7 @@ Desarrollado como proyecto de tesis universitaria, combina tecnicas de vision po
 ## Arquitectura
 
 ┌─────────────────────────────────────────────────────────┐
+
 │ FaceAttenDANCE │
 ├─────────────────────────────────────────────────────────┤
 │ │
