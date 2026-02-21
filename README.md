@@ -1,4 +1,4 @@
-# FaceAttenDANCE [BAILE][BAILE]
+# FaceAttenDANCE - Control de Asistencia para Clases de Danza
 
 **Sistema de reconocimiento facial para control de asistencia en clases de danza**
 
@@ -9,7 +9,7 @@
 
 ---
 
-## [LISTA] Descripcion
+## Descripcion
 
 FaceAttenDANCE es un sistema que permite registrar la asistencia a clases de danza mediante reconocimiento facial en fotos grupales. Todo el procesamiento es **100% local**, garantizando la privacidad de los datos.
 
@@ -21,30 +21,30 @@ Desarrollado como proyecto de tesis universitaria, combina tecnicas de vision po
 
 | Caracteristica 				| Descripcion 													|
 |----------------				|-------------													|
-| **[PRIVADO] 100% Local** 			| Sin conexion a internet, tus fotos nunca salen de tu PC 		|
-| **[FOTO] Fotos grupales** 		| Funciona con las fotos que ya tomas al final de cada clase 	|
-| **[EMOJI] Asociacion inteligente** | Fase 1: Co-ocurrencia ponderada para inferir clases 			|
-| **[GRAFICO] Reportes automaticos** 	| Exportacion a CSV compatible con Excel 						|
-| **[GRAFICO] Estadisticas mensuales** | Visualizacion de asistencias por alumno 						|
-| **[CONFIG] Configurable** 			| Multiples metodos de comparacion y umbral ajustable 			|
-| **[MOVIL] Multiplataforma** 		| Windows, macOS, Linux 										|
+| **100% Local** 			| Sin conexion a internet, tus fotos nunca salen de tu PC 		|
+| **Fotos grupales** 		| Funciona con las fotos que ya tomas al final de cada clase 	|
+| **Asociacion inteligente** | Fase 1: Co-ocurrencia ponderada para inferir clases 			|
+| **Reportes automaticos** 	| Exportacion a CSV compatible con Excel 						|
+| **Estadisticas mensuales** | Visualizacion de asistencias por alumno 						|
+| **Configurable** 			| Multiples metodos de comparacion y umbral ajustable 			|
+| **Multiplataforma** 		| Windows, macOS, Linux 										|
 
 ---
 
 ## [EMOJI] Arquitectura
 
 
-[EMOJI]	[EMOJI]
-[EMOJI] FaceAttenDANCE 												[EMOJI]
-[EMOJI]	[EMOJI]
-[EMOJI] [EMOJI]	[EMOJI] [EMOJI] [EMOJI]	[EMOJI] [EMOJI]	[EMOJI] 	[EMOJI]
-[EMOJI] [EMOJI] Core 		[EMOJI] [EMOJI] Database [EMOJI] [EMOJI] UI 		[EMOJI] [EMOJI] Utils 		[EMOJI] 	[EMOJI]
-[EMOJI] [EMOJI]	[EMOJI] [EMOJI] [EMOJI]	[EMOJI] [EMOJI]	[EMOJI] 	[EMOJI]
-[EMOJI] 																[EMOJI]
-[EMOJI] [EMOJI]	[EMOJI]	[EMOJI]
-[EMOJI] [EMOJI] Tests 													[EMOJI] 	[EMOJI]
-[EMOJI] [EMOJI]	[EMOJI] 	[EMOJI]
-[EMOJI]	[EMOJI]
+┌─────────────────────────────────────────────────────────────	┐
+│                      FaceAttenDANCE                          	│
+├─────────────────────────────────────────────────────────────	┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   	│
+│  │   Core   │  │ Database │  │    UI    │  │  Utils   │   	│
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   	│
+│                                                             	│
+│  ┌──────────────────────────────────────────────────────┐  	│
+│  │                      Tests                           │  	│
+│  └──────────────────────────────────────────────────────┘  	│
+└─────────────────────────────────────────────────────────────	┘
 
 
 ### Componentes principales:
@@ -58,7 +58,7 @@ Desarrollado como proyecto de tesis universitaria, combina tecnicas de vision po
 
 ---
 
-## [EMOJI] Instalacion Rapida
+## Instalacion Rapida
 
 ### Requisitos previos
 - Python 3.8 o superior
@@ -90,7 +90,7 @@ python src/main.py
 ```
 
 
-[LIBRO] Documentacion
+Documentacion
 
 La documentacion completa esta disponible en la carpeta docs/:
 
@@ -113,7 +113,7 @@ Capitulo 5		Resultados
 Capitulo 6		Conclusiones
 
 
-[GRAFICO] Resultados Clave
+Resultados Clave
 
 Metrica					Valor
 
@@ -135,7 +135,7 @@ Promedio				0.83
 Ponderado				0.90
 
 
-[TUBO_ENSAYO] Tests
+Tests
 
 # Instalar dependencias de desarrollo
 pip install -r requirements-dev.txt
@@ -147,7 +147,7 @@ pytest tests/ -v
 pytest tests/ --cov=src --cov-report=html
 
 
-#[APRETON] Contribuir
+#Contribuir
 
 Las contribuciones son bienvenidas. Por favor:
 
@@ -164,11 +164,11 @@ Abrir Pull Request
 Ver Guia para Desarrolladores para mas detalles.
 
 
-[DOC] Licencia
+Licencia
 Distribuido bajo licencia MIT. Ver LICENSE para mas informacion.
 
 
-[EMAIL] Contacto
+Contacto
 Autor: 		[Tu Nombre]
 Email: 		[tu@email.com]
 GitHub: 	@tuusuario
@@ -176,7 +176,7 @@ Proyecto: 	github.com/tuusuario/FaceAttenDANCE
 
 
 
-[GRACIAS] Agradecimientos
+Agradecimientos
 
 A los profesores y companeros que colaboraron en las pruebas
 
@@ -185,7 +185,7 @@ A la comunidad de codigo abierto por las herramientas
 A los alumnos que participaron en las pruebas con datos reales
 
 
-[ESTRELLA] Reconocimientos
+Reconocimientos
 Si este proyecto te resulta util, !considera darle una estrella en GitHub! [ESTRELLA]
 
 ---
