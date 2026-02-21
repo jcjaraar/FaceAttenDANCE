@@ -33,20 +33,35 @@ Desarrollado como proyecto de tesis universitaria, combina tecnicas de vision po
 
 ## Arquitectura
 
-┌─────────────────────────────────────────────────────────┐
+## Arquitectura del Sistema
 
-│ FaceAttenDANCE │
-├─────────────────────────────────────────────────────────┤
-│ │
-│ ┌────────────┐ ┌────────────┐ ┌────────────┐ │
-│ │ Core │ │ Database │ │ UI │ │
-│ └────────────┘ └────────────┘ └────────────┘ │
-│ │
-│ ┌────────────┐ ┌────────────┐ ┌─────────────────┐ │
-│ │ Utils │ │ Tests │ │ Exportación │ │
-│ └────────────┘ └────────────┘ └─────────────────┘ │
-│ │
-└─────────────────────────────────────────────────────────┘
+### Componentes Principales
+
+| Modulo | Responsabilidad | Tecnologia |
+|--------|-----------------|------------|
+| Core | Logica principal (asociador, comparador, detector) | Python |
+| Database | Persistencia de datos | SQLite3 |
+| UI | Interfaz de usuario | Linea de comandos |
+| Utils | Utilidades (imagenes, exportacion) | Pillow, NumPy |
+| Tests | Pruebas unitarias y de integracion | Pytest |
+
+### Organizacion de Modulos
+
+El sistema se estructura en las siguientes capas:
+
+- **Capa 1 - Entrada**: Fotos de alumnos y fotos de clase
+- **Capa 2 - Procesamiento**: Extraccion de descriptores faciales
+- **Capa 3 - Logica**: Comparacion y asociacion de personas
+- **Capa 4 - Persistencia**: Base de datos SQLite
+- **Capa 5 - Salida**: Reportes y exportacion a CSV
+
+### Flujo de Procesamiento
+
+1. Las fotos de alumnos se procesan una sola vez para extraer sus descriptores
+2. Las fotos de clase se procesan al finalizar cada sesion
+3. El sistema compara los rostros detectados con los alumnos registrados
+4. Se registran las asistencias en la base de datos
+5. Se pueden generar reportes mensuales y exportar a Excel
 
 ### Componentes principales:
 
