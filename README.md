@@ -17,7 +17,7 @@ Desarrollado como proyecto de tesis universitaria, combina tecnicas de vision po
 
 ---
 
-## [DESTELLO] Caracteristicas
+## Caracteristicas
 
 | Caracteristica 				| Descripcion 													|
 |----------------				|-------------													|
@@ -31,21 +31,21 @@ Desarrollado como proyecto de tesis universitaria, combina tecnicas de vision po
 
 ---
 
-## [EMOJI] Arquitectura
+## Arquitectura
 
-
-┌─────────────────────────────────────────────────────────────┐
+┌─────────────────────────────────────────────────────────┐
 │ FaceAttenDANCE │
-├─────────────────────────────────────────────────────────────┤
-│ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ │
-│ │ Core │ │ Database │ │ UI │ │ Utils │ │
-│ └──────────┘ └──────────┘ └──────────┘ └──────────┘ │
+├─────────────────────────────────────────────────────────┤
 │ │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ Tests │ │
-│ └──────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-
+│ ┌────────────┐ ┌────────────┐ ┌────────────┐ │
+│ │ Core │ │ Database │ │ UI │ │
+│ └────────────┘ └────────────┘ └────────────┘ │
+│ │
+│ ┌────────────┐ ┌────────────┐ ┌─────────────────┐ │
+│ │ Utils │ │ Tests │ │ Exportación │ │
+│ └────────────┘ └────────────┘ └─────────────────┘ │
+│ │
+└─────────────────────────────────────────────────────────┘
 
 ### Componentes principales:
 
@@ -186,6 +186,6 @@ A los alumnos que participaron en las pruebas con datos reales
 
 
 Reconocimientos
-Si este proyecto te resulta util, !considera darle una estrella en GitHub! [ESTRELLA]
+Si este proyecto te resulta util, !considera darle una estrella en GitHub!
 
 ---
