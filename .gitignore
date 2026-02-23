@@ -1,14 +1,77 @@
 # Python
-venv/
-env/
-ENV/
 __pycache__/
 *.py[cod]
+*$py.class
 *.so
 .Python
-*.egg-info/
-dist/
+venv/
+env/
+.venv/
+.env
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Distribución / empaquetado
+.Python
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Instalador
+*.egg
+*.egg-info/
+*.egg-link
+__pycache__/
+*.pyc
+*.pyo
+*~
+
+# Testing
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+*.py,cover
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Proyecto - Datos (NO versionar)
+data/db/*.db
+data/fotos_alumnos/
+data/fotos_clase/
+data/reportes/
+*.log
 
 # IDE
 .vscode/
@@ -16,23 +79,9 @@ build/
 *.swp
 *.swo
 
-# Project - Datos (NO versionar)
-data/db/*.db
-data/fotos_alumnos/
-data/fotos_clase/
-data/reportes/
-*.log
-
-# Tests
-.coverage
-htmlcov/
-.pytest_cache/
-.tox/
-
-# Jupyter
-.ipynb_checkpoints
-*.ipynb
-
 # OS
 .DS_Store
 Thumbs.db
+
+# Archivos de documentación generados
+site/

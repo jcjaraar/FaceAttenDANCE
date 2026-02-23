@@ -1,27 +1,5 @@
 repos:
-  - repo: https://github.com/psf/black
-    rev: 23.12.1
-    hooks:
-      - id: black
-        language_version: python3
-        args: [--line-length=100]
-
-  - repo: https://github.com/pycqa/pylint
-    rev: v3.0.3
-    hooks:
-      - id: pylint
-        args:
-          - --disable=C0111,C0103,C0301
-          - --max-line-length=100
-        files: ^src/
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
-    hooks:
-      - id: mypy
-        args: [--ignore-missing-imports]
-        files: ^src/
-
+  # Hooks básicos de pre-commit
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
@@ -30,4 +8,39 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
       - id: check-json
+      - id: check-toml
       - id: check-merge-conflict
+      - id: detect-private-key
+
+  # Black - formateador de código
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3
+        args: [--line-length=100]
+
+  # isort - ordenador de imports
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--line-length=100"]
+
+  # Pylint - análisis estático
+  - repo: https://github.com/pycqa/pylint
+    rev: v3.0.3
+    hooks:
+      - id: pylint
+        args:
+          - --disable=C0111,C0103,C0301,C0114,C0115,C0116
+          - --max-line-length=100
+        files: ^src/
+
+  # MyPy - type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        args: [--ignore-missing-imports]
+        files: ^src/

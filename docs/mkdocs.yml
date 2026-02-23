@@ -1,0 +1,60 @@
+site_name: FaceAttenDANCE
+site_description: Sistema de reconocimiento facial para control de asistencia en clases de danza
+site_author: Tu Nombre
+site_url: https://tuusuario.github.io/FaceAttenDANCE/
+
+repo_name: tuusuario/FaceAttenDANCE
+repo_url: https://github.com/tuusuario/FaceAttenDANCE
+
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: pink
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+
+nav:
+  - Inicio: index.md
+  - Manual de Usuario: user_manual.md
+  - Guía para Desarrolladores: developer_guide.md
+  - API Reference: API.md
+  - Tesis:
+    - Capítulo 1: thesis/01_introduccion.md
+    - Capítulo 2: thesis/02_estado_del_arte.md
+    - Capítulo 3: thesis/03_arquitectura.md
+    - Capítulo 4: thesis/04_implementacion.md
+    - Capítulo 5: thesis/05_resultados.md
+    - Capítulo 6: thesis/06_conclusiones.md
+  - Contribuir: contributing.md
+  - Licencia: license.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - footnotes
+  - tables
+  - attr_list
+  - def_list
+  - md_in_html
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+            heading_level: 3

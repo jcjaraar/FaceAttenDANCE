@@ -5,9 +5,9 @@ Módulo de asociación inteligente de alumnos.
 Implementa las tres fases del sistema.
 """
 
-from typing import List, Dict, Set, Tuple, Optional
-from collections import defaultdict
 import logging
+from collections import defaultdict
+from typing import Dict, List, Optional, Set, Tuple
 
 logger = logging.getLogger(__name__)
 
