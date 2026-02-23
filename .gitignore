@@ -1,0 +1,38 @@
+# Python
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project - Datos (NO versionar)
+data/db/*.db
+data/fotos_alumnos/
+data/fotos_clase/
+data/reportes/
+*.log
+
+# Tests
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
