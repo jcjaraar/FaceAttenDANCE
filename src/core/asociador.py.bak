@@ -5,7 +5,7 @@ Módulo de asociación inteligente de alumnos.
 Implementa las tres fases del sistema.
 """
 
-from typing import List, Dict, Set, Tuple, Optional
+from typing import List, Dict, Set, Tuple
 from collections import defaultdict
 import logging
 
@@ -29,6 +29,7 @@ class AsociadorFase1:
         """
         self.umbral = umbral
         self.metodo = metodo
+        # Después (con type hints)
         self.matriz_coocurrencias: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
         self.apariciones: Dict[str, int] = defaultdict(int)
         self.total_sesiones = 0
@@ -88,9 +89,7 @@ class AsociadorFase1:
 
         return 0.0
 
-    def sugerir_grupo(
-        self, persona: str, min_confianza: Optional[float] = None
-    ) -> List[Tuple[str, float]]:
+    def sugerir_grupo(self, persona: str, min_confianza: float = None) -> List[Tuple[str, float]]:
         """Sugiere quiénes podrían estar en la misma clase.
 
         Args:
@@ -115,7 +114,7 @@ class AsociadorFase1:
         return sorted(sugerencias, key=lambda x: -x[1])
 
     def descubrir_clases(
-        self, min_confianza: Optional[float] = None, min_miembros: int = 2
+        self, min_confianza: float = None, min_miembros: int = 2
     ) -> List[Set[str]]:
         """Descubre clases completas automáticamente.
 
@@ -155,7 +154,7 @@ class AsociadorFase1:
 
         total_pares = 0
         pares_confiables = 0
-        suma_confianzas = 0.0
+        suma_confianzas = 0
 
         personas = list(self.apariciones.keys())
         for i, p1 in enumerate(personas):
@@ -171,8 +170,8 @@ class AsociadorFase1:
             "total_personas": len(personas),
             "pares_confiables": pares_confiables,
             "total_pares": total_pares,
-            "porcentaje_confiables": float(
-                (pares_confiables / total_pares * 100) if total_pares > 0 else 0
-            ),
-            "confianza_promedio": suma_confianzas / total_pares if total_pares > 0 else 0.0,
+            "porcentaje_confiables": (pares_confiables / total_pares * 100)
+            if total_pares > 0
+            else 0,
+            "confianza_promedio": suma_confianzas / total_pares if total_pares > 0 else 0,
         }

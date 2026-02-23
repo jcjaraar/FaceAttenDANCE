@@ -41,7 +41,7 @@ class RepositorioBase:
             conn.commit()
         except Exception as e:
             conn.rollback()
-            logger.error("Error en BD: %s", e)
+            logger.error(f"Error en BD: {e}")
             raise
         finally:
             conn.close()
