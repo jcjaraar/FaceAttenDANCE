@@ -85,3 +85,5 @@ Thumbs.db
 
 # Archivos de documentación generados
 site/
+__pycache__/
+*.pyc
