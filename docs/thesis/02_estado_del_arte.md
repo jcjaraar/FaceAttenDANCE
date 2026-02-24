@@ -421,4 +421,3 @@ El siguiente capitulo presenta la arquitectura propuesta para FaceAttenDANCE, ba
 [14] State of California. (2018). California Consumer Privacy Act (CCPA).
 
 [15] European Commission. (2021). Proposal for a Regulation laying down harmonised rules on artificial intelligence (AI Act).
-

@@ -5,6 +5,7 @@ Tests unitarios para el módulo asociador.
 """
 
 import pytest
+
 from src.core.asociador import AsociadorFase1
 
 

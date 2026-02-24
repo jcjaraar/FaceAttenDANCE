@@ -5,10 +5,10 @@ Clase base para repositorios de base de datos.
 Maneja la conexión a SQLite y operaciones comunes.
 """
 
+import logging
 import sqlite3
 from contextlib import contextmanager
 from pathlib import Path
-import logging
 
 logger = logging.getLogger(__name__)
 

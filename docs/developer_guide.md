@@ -109,7 +109,7 @@ pylint --version
 ### 2.2 Clonar y Configurar
 
 + # IMPORTANTE: Todos los comandos deben ejecutarse dentro de WSL
-+ 
++
 # Clonar repositorio
 git clone https://github.com/tuusuario/FaceAttenDANCE
 cd FaceAttenDANCE
@@ -237,25 +237,25 @@ logger = logging.getLogger(__name__)
 
 class MiClase:
     """Descripci車n de la clase."""
-    
+
     def __init__(self, parametro: str):
         """Inicializa la clase.
-        
+
         Args:
             parametro: Descripci車n del par芍metro
         """
         self.parametro = parametro
         logger.info(f"MiClase inicializada con {parametro}")
-    
+
     def mi_funcion(self, x: int) -> bool:
         """Descripci車n de la funci車n.
-        
+
         Args:
             x: N迆mero a procesar
-            
+
         Returns:
             True si se cumpli車 la condici車n
-            
+
         Raises:
             ValueError: Si x es negativo
         """
@@ -279,7 +279,7 @@ from pathlib import Path
 
 class DetectorRostros:
     """Clase principal para detecci車n de rostros."""
-    
+
     def __init__(self, metodo: str = "opencv", tama?o: tuple = (32, 32)):
         """
         Args:
@@ -289,20 +289,20 @@ class DetectorRostros:
         self.metodo = metodo
         self.tama?o = tama?o
         self._inicializar_detector()
-    
+
     def _inicializar_detector(self):
         """Inicializa el detector seg迆n el m谷todo elegido."""
         if self.metodo == "opencv":
             self.face_cascade = cv2.CascadeClassifier(
                 cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
             )
-    
+
     def detectar(self, imagen_path: Path) -> List[np.ndarray]:
         """Detecta rostros en una imagen.
-        
+
         Args:
             imagen_path: Ruta a la imagen
-            
+
         Returns:
             Lista de descriptores de rostros detectados
         """
@@ -319,11 +319,11 @@ import numpy as np
 
 class ComparadorDescriptores:
     """Clase para comparar descriptores usando diferentes m谷tricas."""
-    
+
     @staticmethod
     def diferencia_absoluta(desc1: np.ndarray, desc2: np.ndarray) -> float:
         """Compara usando diferencia absoluta media.
-        
+
         Returns:
             float: Similitud entre 0 y 1
         """
@@ -331,7 +331,7 @@ class ComparadorDescriptores:
             return 0.0
         diff = np.mean(np.abs(desc1 - desc2))
         return max(0.0, min(1.0, 1.0 - diff))
-    
+
     @staticmethod
     def correlacion(desc1: np.ndarray, desc2: np.ndarray) -> float:
         """Compara usando correlaci車n de Pearson."""
@@ -362,12 +362,12 @@ logger = logging.getLogger(__name__)
 class AsociadorFase1:
     """
     Fase 1: Co-ocurrencia ponderada.
-    
+
     Esta fase analiza patrones de asistencia para inferir
     qu谷 alumnos pertenecen a cada clase basado en la frecuencia
     con que aparecen juntos en las fotos.
     """
-    
+
     def __init__(self, umbral: float = 0.6, metodo: str = "ponderado"):
         """
         Args:
@@ -380,126 +380,126 @@ class AsociadorFase1:
         self.apariciones = defaultdict(int)
         self.total_sesiones = 0
         logger.info("AsociadorFase1 inicializado: umbral=%s, metodo=%s", umbral, metodo)
-    
+
     def registrar_sesion(self, asistentes: List[str]):
         """Registra una sesi車n con los asistentes detectados.
-        
+
         Args:
             asistentes: Lista de nombres de personas detectadas
         """
         self.total_sesiones += 1
-        
+
         # Registrar apariciones individuales
         for persona in asistentes:
             self.apariciones[persona] += 1
-        
+
         # Registrar co-ocurrencias (pares)
         for i, p1 in enumerate(asistentes):
             for p2 in asistentes[i+1:]:
                 self.matriz_coocurrencias[p1][p2] += 1
                 self.matriz_coocurrencias[p2][p1] += 1
-        
+
         logger.debug("Sesi車n %s registrada: %s asistentes", self.total_sesiones, len(asistentes))
-    
+
     def calcular_confianza(self, p1: str, p2: str) -> float:
         """Calcula la confianza de que dos personas est芍n en la misma clase.
-        
+
         Args:
             p1: Primera persona
             p2: Segunda persona
-            
+
         Returns:
             float: Confianza entre 0 y 1
         """
         if p1 not in self.apariciones or p2 not in self.apariciones:
             return 0.0
-        
+
         veces_juntos = self.matriz_coocurrencias[p1][p2]
         ap_p1 = self.apariciones[p1]
         ap_p2 = self.apariciones[p2]
-        
+
         if self.metodo == "minimo":
             return veces_juntos / max(ap_p1, ap_p2)
-        
+
         if self.metodo == "maximo":
             return veces_juntos / min(ap_p1, ap_p2) if min(ap_p1, ap_p2) > 0 else 0
-        
+
         if self.metodo == "promedio":
             return (veces_juntos / ap_p1 + veces_juntos / ap_p2) / 2
-        
+
         # M谷todo ponderado - CORREGIDO seg迆n tests
         if self.metodo == "ponderado":
             # Promedio de las proporciones individuales
             # Esto da 0.75 para el caso de prueba (Laura 4, Ariel 2, juntos 2)
             return (veces_juntos / ap_p1 + veces_juntos / ap_p2) / 2
-        
+
         return 0.0
-    
+
     def sugerir_grupo(self, persona: str, min_confianza: float = None) -> List[Tuple[str, float]]:
         """Sugiere qui谷nes podr赤an estar en la misma clase.
-        
+
         Args:
             persona: Persona de referencia
             min_confianza: Umbral m赤nimo (usa self.umbral si es None)
-            
+
         Returns:
             Lista de (persona, confianza) ordenada por confianza
         """
         if persona not in self.apariciones:
             return []
-        
+
         umbral = min_confianza if min_confianza is not None else self.umbral
         sugerencias = []
-        
+
         for otra in self.apariciones:
             if otra != persona:
                 conf = self.calcular_confianza(persona, otra)
                 if conf >= umbral:
                     sugerencias.append((otra, conf))
-        
+
         return sorted(sugerencias, key=lambda x: -x[1])
-    
+
     def descubrir_clases(self, min_confianza: float = None, min_miembros: int = 2) -> List[Set[str]]:
         """Descubre clases completas autom芍ticamente.
-        
+
         Args:
             min_confianza: Umbral m赤nimo
             min_miembros: M赤nimo de miembros por clase
-            
+
         Returns:
             Lista de clases (cada clase es un conjunto de personas)
         """
         umbral = min_confianza if min_confianza is not None else self.umbral
         visitados = set()
         clases = []
-        
+
         for persona in sorted(self.apariciones.keys()):
             if persona in visitados:
                 continue
-            
+
             nueva_clase = {persona}
             visitados.add(persona)
-            
+
             sugerencias = self.sugerir_grupo(persona, umbral)
             for otra, _ in sugerencias:
                 if otra not in visitados:
                     nueva_clase.add(otra)
                     visitados.add(otra)
-            
+
             if len(nueva_clase) >= min_miembros:
                 clases.append(nueva_clase)
-        
+
         return clases
-    
+
     def metricas_calidad(self) -> Dict:
         """Calcula m谷tricas para evaluar la calidad de las asociaciones."""
         if self.total_sesiones == 0:
             return {"error": "Sin datos"}
-        
+
         total_pares = 0
         pares_confiables = 0
         suma_confianzas = 0
-        
+
         personas = list(self.apariciones.keys())
         for i, p1 in enumerate(personas):
             for p2 in personas[i+1:]:
@@ -508,7 +508,7 @@ class AsociadorFase1:
                 suma_confianzas += conf
                 if conf >= self.umbral:
                     pares_confiables += 1
-        
+
         return {
             "total_sesiones": self.total_sesiones,
             "total_personas": len(personas),
@@ -524,16 +524,16 @@ EOF
 class AsociadorFase2(AsociadorFase1):
     """
     Fase 2: A?ade an芍lisis temporal.
-    
+
     Incorpora informaci車n de d赤as y horarios para mejorar
     la precisi車n de las asociaciones.
     """
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.sesiones_por_fecha = defaultdict(list)
         self.patrones_horarios = defaultdict(lambda: defaultdict(int))
-    
+
     def registrar_sesion_con_fecha(self, asistentes: List[str], fecha: str, hora: str = None):
         """Registra sesi車n con informaci車n temporal."""
         super().registrar_sesion(asistentes)
@@ -543,16 +543,16 @@ class AsociadorFase2(AsociadorFase1):
 class AsociadorFase3(AsociadorFase2):
     """
     Fase 3: A?ade aprendizaje activo.
-    
+
     Permite al usuario confirmar o corregir las asociaciones,
     y el sistema aprende de ese feedback.
     """
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.feedback_usuario = defaultdict(dict)
         self.pesos_aprendidos = defaultdict(lambda: 0.5)
-    
+
     def registrar_feedback(self, persona1: str, persona2: str, misma_clase: bool):
         """Registra feedback del usuario sobre una asociaci車n."""
         # Implementar aprendizaje
@@ -640,10 +640,10 @@ from pathlib import Path
 
 class RepositorioBase:
     """Clase base para repositorios."""
-    
+
     def __init__(self, db_path: str = "asistencias.db"):
         self.db_path = Path(db_path)
-    
+
     @contextmanager
     def conexion(self):
         """Context manager para conexiones a BD."""
@@ -680,66 +680,66 @@ from src.core.asociador import AsociadorFase1
 
 class TestAsociadorFase1:
     """Tests para la Fase 1 del asociador."""
-    
+
     def setup_method(self):
         """Configuraci車n antes de cada test."""
         self.asociador = AsociadorFase1(umbral=0.6)
-    
+
     def test_registrar_sesion(self):
         """Verifica que se registren correctamente las sesiones."""
         self.asociador.registrar_sesion(["Laura", "Ariel"])
-        
+
         assert self.asociador.total_sesiones == 1
         assert self.asociador.apariciones["Laura"] == 1
         assert self.asociador.apariciones["Ariel"] == 1
         assert self.asociador.matriz_coocurrencias["Laura"]["Ariel"] == 1
-    
+
     def test_calcular_confianza_minimo(self):
         """Prueba m谷todo m赤nimo de confianza."""
         self.asociador.metodo = "minimo"
-        
+
         # Registrar varias sesiones
         for _ in range(5):
             self.asociador.registrar_sesion(["Laura", "Ariel"])
-        
+
         for _ in range(3):
             self.asociador.registrar_sesion(["Laura"])
-        
+
         confianza = self.asociador.calcular_confianza("Laura", "Ariel")
-        
+
         # Laura aparece 8 veces, Ariel 5, juntos 5
         # M谷todo m赤nimo: 5/8 = 0.625
         assert confianza == pytest.approx(0.625, rel=1e-2)
-    
+
     def test_sugerir_grupo(self):
         """Prueba sugerencias de grupo."""
         # Registrar patr車n de clase consistente
         clase_fija = ["Laura", "Ariel", "Claudia"]
         for _ in range(10):
             self.asociador.registrar_sesion(clase_fija)
-        
+
         # A veces viene M車nica
         for _ in range(3):
             self.asociador.registrar_sesion(clase_fija + ["M車nica"])
-        
+
         sugerencias = self.asociador.sugerir_grupo("Laura")
-        
+
         assert len(sugerencias) >= 2
         assert sugerencias[0][0] in ["Ariel", "Claudia"]
         assert sugerencias[0][1] > 0.8
-    
+
     def test_descubrir_clases(self):
         """Prueba descubrimiento autom芍tico de clases."""
         # Simular dos clases distintas
         clase_salsa = ["Laura", "Ariel", "Claudia"]
         clase_bachata = ["M車nica", "Carlos", "Ana"]
-        
+
         for _ in range(10):
             self.asociador.registrar_sesion(clase_salsa)
             self.asociador.registrar_sesion(clase_bachata)
-        
+
         clases = self.asociador.descubrir_clases(min_miembros=3)
-        
+
         assert len(clases) == 2
         assert any("Laura" in c for c in clases)
         assert any("M車nica" in c for c in clases)
@@ -758,14 +758,14 @@ from src.utils.image_processor import extraer_descriptor
 
 class TestFlujoCompleto:
     """Prueba flujos completos del sistema."""
-    
+
     @pytest.fixture
     def directorio_temporal(self):
         """Crea un directorio temporal para pruebas."""
         temp_dir = tempfile.mkdtemp()
         yield Path(temp_dir)
         shutil.rmtree(temp_dir)
-    
+
     def test_procesar_clase_completa(self, directorio_temporal):
         """Prueba el flujo completo de procesamiento."""
         # Crear estructura
@@ -773,7 +773,7 @@ class TestFlujoCompleto:
         clase_dir = directorio_temporal / "clase_test"
         alumnos_dir.mkdir()
         clase_dir.mkdir()
-        
+
         # Aqu赤 ir赤an las pruebas con im芍genes reales
         # Por ahora, test estructural
         assert alumnos_dir.exists()
@@ -813,12 +813,12 @@ repos:
     rev: 22.3.0
     hooks:
       - id: black
-  
+
   - repo: https://github.com/pycqa/pylint
     rev: v2.17.0
     hooks:
       - id: pylint
-  
+
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v0.991
     hooks:

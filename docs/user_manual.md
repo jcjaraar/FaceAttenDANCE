@@ -21,7 +21,7 @@
 - **Camara**: Para tomar las fotos (puede ser del celular)
 
 ### Software
-- **Sistema Operativo**: 
+- **Sistema Operativo**:
   - Windows 10/11
   - macOS 10.15+
   - Linux (Ubuntu 20.04+)
@@ -391,5 +391,3 @@ Proximas Versiones
 [ESPERA] Fase 3: Aprendizaje activo
 
 [ESPERA] Interfaz grafica
-
-

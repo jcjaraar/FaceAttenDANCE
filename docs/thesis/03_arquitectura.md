@@ -289,10 +289,10 @@ Inicializar total_sesiones = 0
 
 PARA CADA sesion EN sesiones:
     total_sesiones += 1
-    
+
     PARA CADA persona EN sesion.asistentes:
         contador_apariciones[persona] += 1
-    
+
     PARA CADA par (p1, p2) EN sesion.asistentes:
         matriz_coocurrencias[p1][p2] += 1
         matriz_coocurrencias[p2][p1] += 1
@@ -302,12 +302,12 @@ PARA CADA persona EN contador_apariciones:
     PARA CADA otra_persona EN contador_apariciones:
         SI persona != otra_persona:
             veces_juntos = matriz_coocurrencias[persona][otra_persona]
-            confianza = calcular_confianza(veces_juntos, 
+            confianza = calcular_confianza(veces_juntos,
                                           contador_apariciones[persona],
                                           contador_apariciones[otra_persona])
             SI confianza >= UMBRAL:
                 grupo.agregar(otra_persona)
-    
+
     SI tamano(grupo) >= MIN_MIEMBROS:
         clases.agregar(grupo)
 

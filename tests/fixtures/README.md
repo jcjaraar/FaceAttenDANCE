@@ -252,5 +252,3 @@ Los archivos se crearan en data/ y luego puedes copiarlos a tests/fixtures/data/
  "nbformat": 4,
  "nbformat_minor": 4
 }
-
-

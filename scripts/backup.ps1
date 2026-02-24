@@ -31,11 +31,11 @@ $files = Get-ChildItem -Path . -Exclude $exclude -Recurse
 try {
     Compress-Archive -Path $files -DestinationPath "$BACKUP_DIR\$BACKUP_FILE" -Force
     Write-Host "✅ Backup completado: $BACKUP_FILE" -ForegroundColor Green
-    
+
     # Tamaño del archivo
     $size = (Get-Item "$BACKUP_DIR\$BACKUP_FILE").Length / 1MB
     Write-Host "   Tamaño: $([math]::Round($size, 2)) MB"
-    
+
     # Limpiar backups antiguos (mantener últimos 10)
     Write-Host "🧹 Limpiando backups antiguos..."
     $backups = Get-ChildItem -Path $BACKUP_DIR -Filter "*.zip" | Sort-Object LastWriteTime -Descending
@@ -45,9 +45,9 @@ try {
             Write-Host "   Eliminado: $($_.Name)"
         }
     }
-    
+
     Write-Host "✅ Proceso completado" -ForegroundColor Green
-    
+
 } catch {
     Write-Host "❌ Error al crear backup: $_" -ForegroundColor Red
     exit 1

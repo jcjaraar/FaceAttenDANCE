@@ -186,7 +186,7 @@ Metodos
 conexion (context manager)
 @contextmanager
 def conexion(self)
-Context manager para conexiones a BD.	
+Context manager para conexiones a BD.
 Ejemplo:
 with db.conexion() as conn:
     cursor = conn.cursor()

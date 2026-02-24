@@ -71,53 +71,53 @@ from pathlib import Path
 
 class ImageProcessor:
     """Procesador de imagenes para extraccion de descriptores."""
-    
+
     def __init__(self, tamano=(32, 32)):
         """
         Inicializa el procesador con el tamano deseado.
-        
+
         Args:
             tamano: Tupla (ancho, alto) para redimensionar
         """
         self.tamano = tamano
-    
+
     def extraer_descriptor(self, ruta_imagen):
         """
         Extrae un descriptor de una imagen.
-        
+
         Args:
             ruta_imagen: Ruta al archivo de imagen
-            
+
         Returns:
             np.ndarray: Vector de caracteristicas o None si hay error
         """
         try:
             # Abrir imagen y convertir a grises
             img = Image.open(ruta_imagen).convert('L')
-            
+
             # Redimensionar a tamano fijo
             img_redimensionada = img.resize(self.tamano)
-            
+
             # Convertir a array numpy y normalizar
             img_array = np.array(img_redimensionada, dtype=np.float32)
             img_normalizada = img_array / 255.0
-            
+
             # Aplanar a vector 1D
             descriptor = img_normalizada.flatten()
-            
+
             return descriptor
-            
+
         except Exception as e:
             print(f"Error procesando {ruta_imagen}: {e}")
             return None
-    
+
     def extraer_descriptores_lote(self, lista_rutas):
         """
         Extrae descriptores de multiples imagenes.
-        
+
         Args:
             lista_rutas: Lista de rutas a imagenes
-            
+
         Returns:
             Lista de descriptores (los validos)
         """
@@ -165,78 +165,78 @@ import numpy as np
 
 class Comparador:
     """Clase para comparar descriptores faciales."""
-    
+
     @staticmethod
     def diferencia_absoluta(desc1, desc2):
         """
         Compara usando diferencia absoluta media.
-        
+
         Args:
             desc1: Primer descriptor
             desc2: Segundo descriptor
-            
+
         Returns:
             float: Similitud entre 0 y 1
         """
         if desc1 is None or desc2 is None:
             return 0.0
-        
+
         # Calcular diferencia absoluta media
         diff = np.mean(np.abs(desc1 - desc2))
-        
+
         # Convertir a similitud (0 = identico, 1 = totalmente diferente)
         similitud = 1.0 - diff
-        
+
         # Asegurar rango [0, 1]
         return max(0.0, min(1.0, similitud))
-    
+
     @staticmethod
     def correlacion(desc1, desc2):
         """
         Compara usando correlacion de Pearson.
-        
+
         Args:
             desc1: Primer descriptor
             desc2: Segundo descriptor
-            
+
         Returns:
             float: Correlacion entre -1 y 1 (normalizada a 0-1)
         """
         if desc1 is None or desc2 is None:
             return 0.0
-        
+
         # Normalizar
         desc1_norm = (desc1 - np.mean(desc1)) / (np.std(desc1) + 1e-10)
         desc2_norm = (desc2 - np.mean(desc2)) / (np.std(desc2) + 1e-10)
-        
+
         # Calcular correlacion
         corr = np.corrcoef(desc1_norm, desc2_norm)[0, 1]
-        
+
         # Normalizar de [-1,1] a [0,1]
         return (corr + 1) / 2
-    
+
     @staticmethod
     def distancia_euclidiana(desc1, desc2):
         """
         Compara usando distancia euclidiana normalizada.
-        
+
         Args:
             desc1: Primer descriptor
             desc2: Segundo descriptor
-            
+
         Returns:
             float: Similitud entre 0 y 1
         """
         if desc1 is None or desc2 is None:
             return 0.0
-        
+
         # Calcular distancia euclidiana
         dist = np.linalg.norm(desc1 - desc2)
-        
+
         # Normalizar por la maxima distancia posible
         max_dist = np.sqrt(len(desc1))  # Maxima cuando todos los valores son 0 y 1
         similitud = 1.0 - (dist / max_dist)
-        
+
         return max(0.0, min(1.0, similitud))
 
 
@@ -272,15 +272,15 @@ from typing import List, Dict, Set, Tuple
 class AsociadorFase1:
     """
     Fase 1: Co-ocurrencia ponderada.
-    
+
     Esta clase analiza patrones de asistencia para inferir
     que alumnos pertenecen a cada clase.
     """
-    
+
     def __init__(self, umbral: float = 0.6, metodo: str = "ponderado"):
         """
         Inicializa el asociador.
-        
+
         Args:
             umbral: Minimo para considerar asociacion (0.0 a 1.0)
             metodo: Metodo de calculo ('minimo', 'maximo', 'promedio', 'ponderado')
@@ -290,126 +290,126 @@ class AsociadorFase1:
         self.matriz_coocurrencias = defaultdict(lambda: defaultdict(int))
         self.contador_apariciones = defaultdict(int)
         self.total_sesiones = 0
-    
+
     def registrar_sesion(self, asistentes: List[str]):
         """
         Registra una sesion con los asistentes detectados.
-        
+
         Args:
             asistentes: Lista de nombres de personas detectadas
         """
         self.total_sesiones += 1
-        
+
         # Registrar apariciones individuales
         for persona in asistentes:
             self.contador_apariciones[persona] += 1
-        
+
         # Registrar co-ocurrencias (pares)
         for i, p1 in enumerate(asistentes):
             for p2 in asistentes[i+1:]:
                 self.matriz_coocurrencias[p1][p2] += 1
                 self.matriz_coocurrencias[p2][p1] += 1
-    
+
     def _calcular_confianza_par(self, p1: str, p2: str) -> float:
         """
         Calcula la confianza de que dos personas estan en la misma clase.
-        
+
         Args:
             p1: Primera persona
             p2: Segunda persona
-            
+
         Returns:
             float: Confianza entre 0 y 1
         """
         if p1 not in self.contador_apariciones or p2 not in self.contador_apariciones:
             return 0.0
-        
+
         veces_juntos = self.matriz_coocurrencias[p1][p2]
         ap_p1 = self.contador_apariciones[p1]
         ap_p2 = self.contador_apariciones[p2]
-        
+
         if veces_juntos == 0:
             return 0.0
-        
+
         # Probabilidad condicional P(p2 | p1) y P(p1 | p2)
         prob_p2_dado_p1 = veces_juntos / ap_p1
         prob_p1_dado_p2 = veces_juntos / ap_p2
-        
+
         if self.metodo == "minimo":
             return min(prob_p2_dado_p1, prob_p1_dado_p2)
-        
+
         elif self.metodo == "maximo":
             return max(prob_p2_dado_p1, prob_p1_dado_p2)
-        
+
         elif self.metodo == "promedio":
             return (prob_p2_dado_p1 + prob_p1_dado_p2) / 2
-        
+
         elif self.metodo == "ponderado":
             # Ponderar por cantidad de evidencia
             peso_p1 = ap_p1 / (ap_p1 + ap_p2)
             peso_p2 = ap_p2 / (ap_p1 + ap_p2)
             return prob_p2_dado_p1 * peso_p1 + prob_p1_dado_p2 * peso_p2
-        
+
         return 0.0
-    
+
     def sugerir_companeros(self, persona: str, min_confianza: float = None) -> List[Tuple[str, float]]:
         """
         Sugiere quienes podrian estar en la misma clase.
-        
+
         Args:
             persona: Persona de referencia
             min_confianza: Umbral minimo (usa self.umbral si es None)
-            
+
         Returns:
             Lista de (persona, confianza) ordenada por confianza
         """
         if persona not in self.contador_apariciones:
             return []
-        
+
         umbral = min_confianza if min_confianza is not None else self.umbral
         sugerencias = []
-        
+
         for otra in self.contador_apariciones:
             if otra != persona:
                 conf = self._calcular_confianza_par(persona, otra)
                 if conf >= umbral:
                     sugerencias.append((otra, conf))
-        
+
         return sorted(sugerencias, key=lambda x: -x[1])
-    
+
     def descubrir_clases(self, min_confianza: float = None, min_miembros: int = 2) -> List[Set[str]]:
         """
         Descubre clases completas automaticamente.
-        
+
         Args:
             min_confianza: Umbral minimo
             min_miembros: Minimo de miembros por clase
-            
+
         Returns:
             Lista de clases (cada clase es un conjunto de personas)
         """
         umbral = min_confianza if min_confianza is not None else self.umbral
         visitados = set()
         clases = []
-        
+
         for persona in sorted(self.contador_apariciones.keys()):
             if persona in visitados:
                 continue
-            
+
             # Nueva clase candidata
             nueva_clase = {persona}
             visitados.add(persona)
-            
+
             # Buscar companeros frecuentes
             sugerencias = self.sugerir_companeros(persona, umbral)
             for otra, _ in sugerencias:
                 if otra not in visitados:
                     nueva_clase.add(otra)
                     visitados.add(otra)
-            
+
             if len(nueva_clase) >= min_miembros:
                 clases.append(nueva_clase)
-        
+
         return clases
 
 
@@ -454,22 +454,22 @@ from contextlib import contextmanager
 
 class DatabaseConnection:
     """Manejador de conexion a base de datos."""
-    
+
     def __init__(self, db_path: str = "asistencias.db"):
         """
         Inicializa la conexion.
-        
+
         Args:
             db_path: Ruta al archivo de base de datos
         """
         self.db_path = Path(db_path)
         self._inicializar_bd()
-    
+
     def _inicializar_bd(self):
         """Crea las tablas si no existen."""
         with self.conexion() as conn:
             cursor = conn.cursor()
-            
+
             # Tabla de alumnos
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS alumnos (
@@ -481,7 +481,7 @@ class DatabaseConnection:
                     activo INTEGER DEFAULT 1
                 )
             """)
-            
+
             # Tabla de asistencias
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS asistencias (
@@ -494,7 +494,7 @@ class DatabaseConnection:
                     UNIQUE(alumno_id, clase_nombre, fecha)
                 )
             """)
-            
+
             # Tabla de sesiones
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS sesiones (
@@ -507,14 +507,14 @@ class DatabaseConnection:
                     UNIQUE(clase_nombre, fecha)
                 )
             """)
-            
+
             conn.commit()
-    
+
     @contextmanager
     def conexion(self):
         """
         Context manager para conexiones a BD.
-        
+
         Uso:
             with db.conexion() as conn:
                 cursor = conn.cursor()
@@ -541,44 +541,44 @@ from typing import List, Optional
 
 class RepositorioAlumnos:
     """Repositorio para operaciones con alumnos."""
-    
+
     def __init__(self, db_connection):
         self.db = db_connection
-    
+
     def guardar(self, nombre: str, foto_path: str, descriptor=None) -> int:
         """
         Guarda un alumno en la base de datos.
-        
+
         Args:
             nombre: Nombre del alumno
             foto_path: Ruta a la foto
             descriptor: Descriptor facial (opcional)
-            
+
         Returns:
             int: ID del alumno guardado
         """
         with self.db.conexion() as conn:
             cursor = conn.cursor()
-            
+
             descriptor_bytes = pickle.dumps(descriptor) if descriptor is not None else None
-            
+
             cursor.execute("""
-                INSERT OR REPLACE INTO alumnos 
+                INSERT OR REPLACE INTO alumnos
                 (nombre, foto_path, descriptor, fecha_registro)
                 VALUES (?, ?, ?, ?)
             """, (nombre, str(foto_path), descriptor_bytes,
                   datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-            
+
             conn.commit()
             return cursor.lastrowid
-    
+
     def buscar_por_nombre(self, nombre: str) -> Optional[dict]:
         """
         Busca un alumno por nombre.
-        
+
         Args:
             nombre: Nombre del alumno
-            
+
         Returns:
             dict: Datos del alumno o None
         """
@@ -588,16 +588,16 @@ class RepositorioAlumnos:
                 SELECT id, nombre, foto_path, descriptor, activo
                 FROM alumnos WHERE nombre = ?
             """, (nombre,))
-            
+
             row = cursor.fetchone()
             if row:
                 return dict(row)
             return None
-    
+
     def listar_activos(self) -> List[dict]:
         """
         Lista todos los alumnos activos.
-        
+
         Returns:
             Lista de alumnos
         """
@@ -608,7 +608,7 @@ class RepositorioAlumnos:
                 FROM alumnos WHERE activo = 1
                 ORDER BY nombre
             """)
-            
+
             return [dict(row) for row in cursor.fetchall()]
 
 
@@ -628,38 +628,38 @@ from pathlib import Path
 
 class CLI:
     """Interfaz de linea de comandos."""
-    
+
     def __init__(self):
         self.parser = self._crear_parser()
-    
+
     def _crear_parser(self):
         """Crea el parser de argumentos."""
         parser = argparse.ArgumentParser(
             description="FaceAttenDANCE - Control de Asistencia"
         )
-        
+
         subparsers = parser.add_subparsers(dest="comando", help="Comandos")
-        
+
         # Comando: procesar
         p_procesar = subparsers.add_parser("procesar", help="Procesar clase")
         p_procesar.add_argument("carpeta", help="Carpeta con fotos")
         p_procesar.add_argument("--clase", "-c", help="Nombre de la clase")
         p_procesar.add_argument("--fecha", "-f", help="Fecha (YYYY-MM-DD)")
         p_procesar.add_argument("--umbral", "-u", type=float, default=0.5)
-        
+
         # Comando: reporte
         p_reporte = subparsers.add_parser("reporte", help="Generar reporte")
         p_reporte.add_argument("--clase", "-c", help="Filtrar por clase")
         p_reporte.add_argument("--mes", "-m", type=int, help="Mes")
         p_reporte.add_argument("--ano", "-a", type=int, help="Ano")
-        
+
         # Comando: exportar
         p_exportar = subparsers.add_parser("exportar", help="Exportar a CSV")
         p_exportar.add_argument("--clase", "-c", required=True, help="Clase")
         p_exportar.add_argument("--formato", choices=["csv"], default="csv")
-        
+
         return parser
-    
+
     def menu_interactivo(self):
         """Muestra menu interactivo."""
         while True:
@@ -671,9 +671,9 @@ class CLI:
             print("3. Exportar asistencias")
             print("4. Salir")
             print("-"*50)
-            
+
             opcion = input("Seleccione una opcion: ").strip()
-            
+
             if opcion == "1":
                 self._menu_procesar()
             elif opcion == "2":
@@ -685,29 +685,29 @@ class CLI:
                 break
             else:
                 print("[ERROR] Opcion invalida")
-    
+
     def _menu_procesar(self):
         """Submenu para procesar clase."""
         carpeta = input("[CARPETA] Carpeta con fotos: ").strip()
         clase = input("[NOTA] Nombre de la clase (Enter para general): ").strip()
         fecha = input("[CALENDARIO] Fecha (Enter para hoy): ").strip()
         umbral = input("[DARDO] Umbral (Enter para 0.5): ").strip()
-        
+
         umbral = float(umbral) if umbral else 0.5
-        
+
         print(f"\n[OK] Procesando {carpeta}...")
         # Aqui iria la llamada al sistema
-    
+
     def _menu_reportes(self):
         """Submenu para ver reportes."""
         print("\n[GRAFICO] Reportes disponibles:")
         print("1. Reporte mensual")
         print("2. Reporte por clase")
         print("3. Volver")
-        
+
         opcion = input("Seleccione: ").strip()
         # Implementar
-    
+
     def _menu_exportar(self):
         """Submenu para exportar."""
         clase = input("[NOTA] Clase a exportar: ").strip()
@@ -729,24 +729,24 @@ from src.core.asociador import AsociadorFase1
 
 class TestAsociadorFase1:
     """Pruebas para la Fase 1 del asociador."""
-    
+
     def setup_method(self):
         """Configuracion antes de cada test."""
         self.asociador = AsociadorFase1(umbral=0.6)
-    
+
     def test_registrar_sesion(self):
         """Verifica que se registren correctamente las sesiones."""
         self.asociador.registrar_sesion(["Laura", "Ariel"])
-        
+
         assert self.asociador.total_sesiones == 1
         assert self.asociador.contador_apariciones["Laura"] == 1
         assert self.asociador.contador_apariciones["Ariel"] == 1
         assert self.asociador.matriz_coocurrencias["Laura"]["Ariel"] == 1
-    
+
     def test_calcular_confianza_minimo(self):
         """Prueba metodo minimo de confianza."""
         self.asociador.metodo = "minimo"
-        
+
         # Laura aparece 10 veces, Ariel 8, juntos 6
         for i in range(10):
             asistentes = ["Laura"]
@@ -756,16 +756,16 @@ class TestAsociadorFase1:
                 self.asociador.registrar_sesion(asistentes)
             else:
                 self.asociador.registrar_sesion(asistentes)
-        
+
         confianza = self.asociador._calcular_confianza_par("Laura", "Ariel")
-        
+
         # Metodo minimo: 6/10 = 0.6
         assert confianza == pytest.approx(0.6, rel=1e-2)
-    
+
     def test_calcular_confianza_ponderado(self):
         """Prueba metodo ponderado."""
         self.asociador.metodo = "ponderado"
-        
+
         # Laura aparece 10 veces, Ariel 8, juntos 6
         for i in range(10):
             asistentes = ["Laura"]
@@ -775,24 +775,24 @@ class TestAsociadorFase1:
                 self.asociador.registrar_sesion(asistentes)
             else:
                 self.asociador.registrar_sesion(asistentes)
-        
+
         confianza = self.asociador._calcular_confianza_par("Laura", "Ariel")
-        
+
         # Ponderado: (6/10)*0.56 + (6/8)*0.44 = 0.336 + 0.33 = 0.666
         assert confianza == pytest.approx(0.666, rel=1e-2)
-    
+
     def test_descubrir_clases(self):
         """Prueba descubrimiento automatico de clases."""
         # Simular dos clases distintas
         clase_salsa = ["Laura", "Ariel", "Claudia"]
         clase_bachata = ["Monica", "Carlos", "Ana"]
-        
+
         for _ in range(10):
             self.asociador.registrar_sesion(clase_salsa)
             self.asociador.registrar_sesion(clase_bachata)
-        
+
         clases = self.asociador.descubrir_clases(min_miembros=3)
-        
+
         assert len(clases) == 2
         assert any("Laura" in c for c in clases)
         assert any("Monica" in c for c in clases)
